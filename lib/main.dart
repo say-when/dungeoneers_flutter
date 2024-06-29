@@ -3,15 +3,43 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
-void main() {
+import 'package:dungeoneers/app/i18n.dart';
+import 'package:dungeoneers/providers/system_info.dart';
+import 'package:dungeoneers/services/system.dart';
+
+final navigatorKey = GlobalKey<NavigatorState>();
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
+  String userAgent = await System.getUserAgentString();
+  String documentDirectory = await System.documentDirectory;
+  String libraryDirectory = await System.libraryDirectory;
+  String soundsDirectory = await System.soundsDirectory;
+  String bundleDirectory = await System.bundleDirectory;
+  String tempDirectory = await System.tempDirectory;
+  await SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeRight,
     DeviceOrientation.landscapeLeft,
-  ]).then((_) {
-    runApp(const DungeoneersApp());
-  });
+  ]);
+  await SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.manual,
+    overlays: [],
+  );
+
+  runApp(
+    Provider<SystemInfo>(
+      create: (_) => SystemInfo(
+        userAgent: userAgent,
+        documentDirectory: documentDirectory,
+        libraryDirectory: libraryDirectory,
+        soundsDirectory: soundsDirectory,
+        bundleDirectory: bundleDirectory,
+        tempDirectory: tempDirectory,
+      ),
+      child: const DungeoneersApp(),
+    ),
+  );
 }
 
 class DungeoneersApp extends StatelessWidget {
@@ -20,6 +48,7 @@ class DungeoneersApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    AppTranslations.init(context);
     return Platform.isIOS
         ? CupertinoApp(
             title: 'Dugeoneers',
@@ -32,7 +61,7 @@ class DungeoneersApp extends StatelessWidget {
               DefaultCupertinoLocalizations.delegate,
               DefaultWidgetsLocalizations.delegate,
             ],
-            home: const DungeoneersMain(title: 'Flutter Demo Home Page'),
+            home: const DungeoneersMain(title: 'Dungeoneers'),
           )
         : MaterialApp(
             title: 'Dugeoneers',
@@ -45,7 +74,7 @@ class DungeoneersApp extends StatelessWidget {
               DefaultCupertinoLocalizations.delegate,
               DefaultWidgetsLocalizations.delegate,
             ],
-            home: const DungeoneersMain(title: 'Flutter Demo Home Page'),
+            home: const DungeoneersMain(title: 'Dungeoneers'),
           );
   }
 }
@@ -91,42 +120,36 @@ class _DungeoneersMainState extends State<DungeoneersMain> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      appBar: null,
+      body: SafeArea(
+        child: Center(
+          // Center is a layout widget. It takes a single child and positions it
+          // in the middle of the parent.
+          child: Column(
+            // Column is also a layout widget. It takes a list of children and
+            // arranges them vertically. By default, it sizes itself to fit its
+            // children horizontally, and tries to be as tall as its parent.
+            //
+            // Column has various properties to control how it sizes itself and
+            // how it positions its children. Here we use mainAxisAlignment to
+            // center the children vertically; the main axis here is the vertical
+            // axis because Columns are vertical (the cross axis would be
+            // horizontal).
+            //
+            // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
+            // action in the IDE, or press "p" in the console), to see the
+            // wireframe for each widget.
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'You have pushed the button this many times:',
+              ),
+              Text(
+                '$_counter',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

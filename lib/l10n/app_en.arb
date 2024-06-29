@@ -1,0 +1,12 @@
+{
+  "helloWorld": "Hello World!",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  "systemErrorTitle": "Dungeoneers Error",
+  "systemErrorText": "Something went wrong trying to contact the server.",
+  "invalidResult": "Invalid result.",
+  "invalidResultData": "Invalid result data.",
+  "ok": "OK",
+  "cancel": "Cancel"
+}

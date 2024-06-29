@@ -1,4 +1,4 @@
-package com.example.dungeoneers
+package com.rogueswordgames.dungeoneers_flutter
 
 import io.flutter.embedding.android.FlutterActivity
 
