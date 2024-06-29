@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+//import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+//import 'package:webview_flutter/webview_flutter.dart';
 
-import 'package:dungeoneers/app/api.dart';
+//import 'package:dungeoneers/app/api.dart';
 import 'package:dungeoneers/app/i18n.dart';
 import 'package:dungeoneers/main.dart';
 import 'package:dungeoneers/networking/models/dg_network_result.dart';
@@ -30,7 +30,7 @@ class Network {
   Network() {
     //var baseURL = '${API.baseURL}${API.apiURL}';
     // _dio.options.baseUrl = baseURL;
-    _dio.interceptors.add(CookieManager(cookieJar));
+    //// _dio.interceptors.add(CookieManager(cookieJar));
     /*_dio.interceptors.add(
       InterceptorsWrapper(
         /*onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
@@ -329,47 +329,5 @@ class Network {
         return e;
       }
     }
-  }
-
-  static Future<Cookie?> getSessionCookie() async {
-    var list = await Network.cookieJar.loadForRequest(Uri.parse(API.baseURL));
-    for (var cookie in list) {
-      if (cookie.name == '_session_id') {
-        return cookie;
-      }
-    }
-    return null;
-  }
-
-  //
-  // Static Methods
-  //
-  static Future<void> copySessionCookies() async {
-    final cookieManager = WebViewCookieManager();
-    //print('Copying session cookiess...');
-    //print('++++++DEBUG: Loading cookies for ${API.baseURL}...');
-    final uri = Uri.parse(API.baseURL);
-    final domain = uri.host;
-    //print('++++++DEBUG: Domain: $domain');
-    var list = await Network.cookieJar.loadForRequest(Uri.parse(API.baseURL));
-    //print('++++++DEBUG: Clearing cookies...');
-    //await cookieManager.clearCookies();
-    for (var cookie in list) {
-      //print('++++++DEBUG: Setting cookie: ${cookie.name}=${cookie.value}');
-      //await cookieManager.setCookie(WebViewCookie(
-      //    name: cookie.name, value: cookie.value, domain: API.baseURL));
-      await cookieManager.setCookie(WebViewCookie(
-          name: cookie.name,
-          value: cookie.value,
-          domain: domain,
-          path: cookie.path ?? '/'));
-
-      await cookieManager.setCookie(WebViewCookie(
-          name: cookie.name,
-          value: cookie.value,
-          domain: API.baseURL,
-          path: '/'));
-    }
-    //print('++++++DEBUG: Cookies loaded and set...');
   }
 }
