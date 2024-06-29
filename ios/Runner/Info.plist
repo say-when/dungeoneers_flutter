@@ -41,5 +41,18 @@
 		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+            <key>NSAllowsArbitraryLoads</key>
+            <true/>
+        <key>UIBackgroundModes</key>
+        <array>
+            <string>audio</string>
+        </array>
+        <key>WKWebViewConfiguration</key>
+        <dict>
+            <key>allowsInlineMediaPlayback</key>
+            <true/>
+            <key>mediaTypesRequiringUserActionForPlayback</key>
+            <string>0</string>
+        </dict>
 	</dict>
 </plist>

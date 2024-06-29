@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'package:dungeoneers/app/api.dart';
 import 'package:dungeoneers/networking/network.dart';
@@ -15,7 +16,7 @@ class DNGWebView extends StatefulWidget {
 }
 
 class _DNGWebViewState extends State<DNGWebView> with WidgetsBindingObserver {
-  late final WebViewController controller;
+  late final WebViewController _controller;
 
   Brightness brightness =
       WidgetsBinding.instance.platformDispatcher.platformBrightness;
@@ -25,7 +26,17 @@ class _DNGWebViewState extends State<DNGWebView> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
 
     super.initState();
-    controller = WebViewController()
+
+    late final PlatformWebViewControllerCreationParams params;
+    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+      params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+      );
+    } else {
+      params = const PlatformWebViewControllerCreationParams();
+    }
+    _controller = WebViewController.fromPlatformCreationParams(params)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFFFFFFF));
     initPlatformState();
@@ -50,7 +61,7 @@ class _DNGWebViewState extends State<DNGWebView> with WidgetsBindingObserver {
 
   Future<void> initPlatformState() async {
     try {
-      controller
+      _controller
         ..clearCache()
         ..setUserAgent(Network.userAgent)
         ..setNavigationDelegate(
@@ -79,8 +90,8 @@ class _DNGWebViewState extends State<DNGWebView> with WidgetsBindingObserver {
           ),
         );
       //print('++++++DEBUG: Copying session cookie...');
-      await controller.clearLocalStorage();
-      await controller.clearCache();
+      await _controller.clearLocalStorage();
+      await _controller.clearCache();
       //print('++++++DEBUG: WebView is copying session cookies...');
       //await Network.copySessionCookies();
       //print('++++++DEBUG: WebView is done copying session cookies...');
@@ -96,7 +107,7 @@ class _DNGWebViewState extends State<DNGWebView> with WidgetsBindingObserver {
           'Cookie': '${cookie.name}=${cookie.value}'
         };*/
 
-      controller.loadRequest(Uri.parse(API.baseURL));
+      _controller.loadRequest(Uri.parse(API.baseURL));
     } catch (err) {
       log('++++++ERROR: Could not create the WebView!');
     }
@@ -106,7 +117,7 @@ class _DNGWebViewState extends State<DNGWebView> with WidgetsBindingObserver {
     var funcName =
         brightness == Brightness.light ? 'setLightMode' : 'setDarkMode';
     var funct = 'if (typeof($funcName) == \'function\') { $funcName() }';
-    controller.runJavaScript(funct);
+    _controller.runJavaScript(funct);
   }
 
   @override
@@ -117,13 +128,13 @@ class _DNGWebViewState extends State<DNGWebView> with WidgetsBindingObserver {
 
     Widget webView = isTablet
         ? AspectRatio(
-          aspectRatio: 4 / 3,
-          child: WebViewWidget(
-            controller: controller,
-          ),
-        )
+            aspectRatio: 4 / 3,
+            child: WebViewWidget(
+              controller: _controller,
+            ),
+          )
         : WebViewWidget(
-            controller: controller,
+            controller: _controller,
           );
 
     return SafeArea(
