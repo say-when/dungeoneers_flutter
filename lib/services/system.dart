@@ -111,14 +111,14 @@ class System {
       var version = iosInfo.systemVersion;
       strVersion = version;
 
-      var str = "($strMachine; $strVersion; $os)";
+      var str = "($strMachine; $strVersion)"; //; $os)";
       return str;
     } else if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       var device = androidInfo.device;
       var sdkInt = androidInfo.version.sdkInt;
       var release = androidInfo.version.release;
-      return '($device; $release/$sdkInt; $os)';
+      return '($device; $release/$sdkInt)'; // $os)';
     } else {
       return '(unknown; unknown; $os)';
     }
