@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:dungeoneers/app/constants.dart';
 import 'package:dungeoneers/app/i18n.dart';
 import 'package:dungeoneers/providers/system_info.dart';
+import 'package:dungeoneers/providers/system_settings.dart';
+import 'package:dungeoneers/services/logger.dart';
 import 'package:dungeoneers/services/system.dart';
 import 'package:dungeoneers/dng_web_view.dart';
 
@@ -16,15 +18,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //Dungeoneers 2.0 rv:88 (iPad14,9; 17.5)
   String userAgent = await System.getUserAgentString();
+  debugLog('User Agent: $userAgent');
   String documentDirectory = await System.documentDirectory;
   String libraryDirectory = await System.libraryDirectory;
   String soundsDirectory = await System.soundsDirectory;
   String bundleDirectory = await System.bundleDirectory;
   String tempDirectory = await System.tempDirectory;
+
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeRight,
     DeviceOrientation.landscapeLeft,
   ]);
+  
   await SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.manual,
     overlays: [],
@@ -52,49 +57,72 @@ class DungeoneersApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppTranslations.init(context);
-    return Platform.isIOS
-        ? CupertinoApp(
-            title: Constants.appTitle,
-            theme: CupertinoThemeData(
-              primaryColor: Colors.deepPurple,
-              primaryContrastingColor: Colors.purple[200],
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => SystemSettings(),
+        ),
+      ],
+      child: Platform.isIOS
+          ? CupertinoApp(
+              title: Constants.appTitle,
+              theme: CupertinoThemeData(
+                primaryColor: Colors.deepPurple,
+                primaryContrastingColor: Colors.purple[200],
+              ),
+              localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+                DefaultMaterialLocalizations.delegate,
+                DefaultCupertinoLocalizations.delegate,
+                DefaultWidgetsLocalizations.delegate,
+              ],
+              navigatorKey: navigatorKey,
+              home: const DungeoneersMain(),
+            )
+          : MaterialApp(
+              title: Constants.appTitle,
+              theme: ThemeData(
+                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+                useMaterial3: false,
+              ),
+              localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+                DefaultMaterialLocalizations.delegate,
+                DefaultCupertinoLocalizations.delegate,
+                DefaultWidgetsLocalizations.delegate,
+              ],
+              navigatorKey: navigatorKey,
+              home: const DungeoneersMain(),
             ),
-            localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
-              DefaultMaterialLocalizations.delegate,
-              DefaultCupertinoLocalizations.delegate,
-              DefaultWidgetsLocalizations.delegate,
-            ],
-            navigatorKey: navigatorKey,
-            home: const DungeoneersMain(),
-          )
-        : MaterialApp(
-            title: Constants.appTitle,
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-              useMaterial3: false,
-            ),
-            localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
-              DefaultMaterialLocalizations.delegate,
-              DefaultCupertinoLocalizations.delegate,
-              DefaultWidgetsLocalizations.delegate,
-            ],
-            navigatorKey: navigatorKey,
-            home: const DungeoneersMain(),
-          );
+    );
   }
 }
 
-class DungeoneersMain extends StatelessWidget {
+class DungeoneersMain extends StatefulWidget {
   const DungeoneersMain({super.key});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+  @override
+  State<DungeoneersMain> createState() => _DungeoneersMainState();
+}
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+class _DungeoneersMainState extends State<DungeoneersMain> {
+  // This widget is the home page of your application. It is stateful, meaning
+
+  @override
+  void initState() {
+    super.initState();
+    initializeSettings();
+  }
+
+  void initializeSettings() async {
+    var provider = Provider.of<SystemSettings>(context, listen: false);
+    var index = await provider.getStoredAppURLIndex();
+    if (index == null) {
+      await provider.storeAppURLIndex(0);
+      provider.setAppURLIndex(0);
+    } else {
+      provider.setAppURLIndex(index);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
