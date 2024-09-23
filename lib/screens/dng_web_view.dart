@@ -1,4 +1,6 @@
-import 'package:dungeoneers/dng_web_base.dart';
+import 'dart:io';
+
+import 'package:dungeoneers/screens/dng_web_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +10,7 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:dungeoneers/mixins/javascript_callback_mixin.dart';
 import 'package:dungeoneers/networking/network.dart';
 import 'package:dungeoneers/providers/system_settings.dart';
+import 'package:dungeoneers/screens/debug_screen.dart';
 import 'package:dungeoneers/services/logger.dart';
 //import 'package:dungeoneers/theme/app_theme.dart';
 
@@ -45,10 +48,13 @@ class _DNGWebViewState extends DNGWebBase
       ..setBackgroundColor(const Color(0xFFFFFFFF));
 
     initPlatformState();
+    Future.delayed(const Duration(seconds: 2), () {
+      showDebugScreen();
+    });
   }
 
   void _systemSettingsListener() {
-    controller.loadRequest(Uri.parse(systemSettings.baseURL()));
+    loadDungeoneers();
   }
 
   @override
@@ -114,7 +120,7 @@ class _DNGWebViewState extends DNGWebBase
           'Cookie': '${cookie.name}=${cookie.value}'
         };*/
       debugLog('Loading URL: ${systemSettings.baseURL()}');
-      controller.loadRequest(Uri.parse(systemSettings.baseURL()));
+      loadDungeoneers();
     } catch (err) {
       log('++++++ERROR: Could not create the WebView!');
     }
@@ -125,6 +131,22 @@ class _DNGWebViewState extends DNGWebBase
         brightness == Brightness.light ? 'setLightMode' : 'setDarkMode';
     var funct = 'if (typeof($funcName) == \'function\') { $funcName() }';
     controller.runJavaScript(funct);
+  }
+
+  void showDebugScreen() {
+    if (Platform.isIOS) {
+      showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const DebugScreen();
+          });
+    } else if (Platform.isAndroid) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const DebugScreen();
+          });
+    }
   }
 
   @override

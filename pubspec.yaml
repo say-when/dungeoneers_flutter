@@ -54,6 +54,7 @@ dependencies:
   flutter_native_splash: ^2.4.0
   webview_flutter_wkwebview: ^3.13.1
   shared_preferences: ^2.3.2
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:

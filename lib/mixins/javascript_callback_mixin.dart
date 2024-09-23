@@ -1,4 +1,4 @@
-import 'package:dungeoneers/dng_web_base.dart';
+import 'package:dungeoneers/screens/dng_web_base.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dungeoneers/services/logger.dart';
@@ -126,7 +126,6 @@ mixin JavaScriptCallbackMixin on DNGWebBase {
   }
 
   // Placeholder methods for the various actions
-  void loadDungeoneers() {}
   void purchaseInAppConsumable(String productID, int quantity, String name,
       String callback, String accountKey) {}
   void purchaseInAppOneTime(
@@ -137,5 +136,4 @@ mixin JavaScriptCallbackMixin on DNGWebBase {
   void completedPurchase(String transactionID) {}
   void processTransactionsBeforeReady() {}
   void showInAppRatingsAlert() {}
-  void openURL(String url) {}
 }

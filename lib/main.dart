@@ -11,7 +11,7 @@ import 'package:dungeoneers/providers/system_info.dart';
 import 'package:dungeoneers/providers/system_settings.dart';
 import 'package:dungeoneers/services/logger.dart';
 import 'package:dungeoneers/services/system.dart';
-import 'package:dungeoneers/dng_web_view.dart';
+import 'package:dungeoneers/screens/dng_web_view.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
