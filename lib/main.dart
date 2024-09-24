@@ -11,7 +11,7 @@ import 'package:dungeoneers/providers/system_info.dart';
 import 'package:dungeoneers/providers/system_settings.dart';
 import 'package:dungeoneers/services/logger.dart';
 import 'package:dungeoneers/services/system.dart';
-import 'package:dungeoneers/screens/dng_web_view.dart';
+import 'package:dungeoneers/screens/dng_main_screen.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
@@ -136,7 +136,7 @@ class _DungeoneersMainState extends State<DungeoneersMain> {
       body: Container(
         alignment: Alignment.center,
         color: Colors.black,
-        child: const DNGWebView(),
+        child: const DNGMainScreen(),
       ),
     ); // This trailing comma makes auto-formatting nicer for build methods.
   }

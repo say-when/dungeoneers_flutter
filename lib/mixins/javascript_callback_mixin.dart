@@ -1,4 +1,4 @@
-import 'package:dungeoneers/screens/dng_web_base.dart';
+import 'package:dungeoneers/screens/dng_main_base.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dungeoneers/services/logger.dart';
@@ -10,8 +10,7 @@ enum TransactionState {
   restored,
 }
 
-mixin JavaScriptCallbackMixin on DNGWebBase {
-  
+mixin JavaScriptCallbackMixin on DNGMainBase {
   void makeCallbackForPurchase(
       String callback,
       String productID,
@@ -91,7 +90,7 @@ mixin JavaScriptCallbackMixin on DNGWebBase {
         purchaseInAppOneTime(productID, callback, accountKey);
         break;
       case 'msgShowDebugView':
-        showDebugViewController();
+        showDebugScreen();
         break;
       case 'msgRestorePurchases':
         var accountKey = body['account_key'];
@@ -124,16 +123,4 @@ mixin JavaScriptCallbackMixin on DNGWebBase {
         break;
     }
   }
-
-  // Placeholder methods for the various actions
-  void purchaseInAppConsumable(String productID, int quantity, String name,
-      String callback, String accountKey) {}
-  void purchaseInAppOneTime(
-      String productID, String callback, String accountKey) {}
-  void showDebugViewController() {}
-  void restorePurchases(
-      {required String callback, required String accountKey}) {}
-  void completedPurchase(String transactionID) {}
-  void processTransactionsBeforeReady() {}
-  void showInAppRatingsAlert() {}
 }

@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:dungeoneers/screens/dng_web_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
@@ -11,18 +12,20 @@ import 'package:dungeoneers/mixins/javascript_callback_mixin.dart';
 import 'package:dungeoneers/networking/network.dart';
 import 'package:dungeoneers/providers/system_settings.dart';
 import 'package:dungeoneers/screens/debug_screen.dart';
+import 'package:dungeoneers/screens/dng_main_base.dart';
 import 'package:dungeoneers/services/logger.dart';
 //import 'package:dungeoneers/theme/app_theme.dart';
 
-class DNGWebView extends StatefulWidget {
-  const DNGWebView({super.key});
+class DNGMainScreen extends StatefulWidget {
+  const DNGMainScreen({super.key});
 
   @override
-  State<DNGWebView> createState() => _DNGWebViewState();
+  State<DNGMainScreen> createState() => _DNGMainScreenState();
 }
 
-class _DNGWebViewState extends DNGWebBase
+class _DNGMainScreenState extends DNGMainBase
     with WidgetsBindingObserver, JavaScriptCallbackMixin {
+  final InAppReview _inAppReview = InAppReview.instance;
   Brightness brightness =
       WidgetsBinding.instance.platformDispatcher.platformBrightness;
 
@@ -50,9 +53,10 @@ class _DNGWebViewState extends DNGWebBase
     initPlatformState();
 
     // Test DebugScreen...
-    /*Future.delayed(const Duration(seconds: 2), () {
-      showDebugScreen();
-    });*/
+    Future.delayed(const Duration(seconds: 2), () {
+      //showDebugScreen();
+      showInAppRatingsAlert();
+    });
   }
 
   void _systemSettingsListener() {
@@ -135,7 +139,18 @@ class _DNGWebViewState extends DNGWebBase
     controller.runJavaScript(funct);
   }
 
-  void showDebugScreen() {
+  @override
+  void loadDungeoneers() {
+    controller.loadRequest(Uri.parse(systemSettings.baseURL()));
+  }
+
+  @override
+  clearWebCache() {
+    controller.clearCache();
+  }
+
+  @override
+  showDebugScreen() {
     if (Platform.isIOS) {
       showCupertinoDialog(
           context: context,
@@ -151,6 +166,37 @@ class _DNGWebViewState extends DNGWebBase
     }
   }
 
+  @override
+  void openURL(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      log('++++++ERROR: Could not launch $url');
+    }
+  }
+
+  @override
+  Future<void> showInAppRatingsAlert() async {
+    if (await _inAppReview.isAvailable()) {
+      await _inAppReview.requestReview();
+    }
+  }
+
+  void openStoreListing() async {
+    final url = Platform.isIOS
+        ? 'https://apps.apple.com/app/1233004509' // Replace with your app's App Store URL
+        : 'https://play.google.com/store/apps/details?id=YOUR_APP_ID'; // Replace with your app's Play Store URL
+
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      log('++++++ERROR: Could not launch $url');
+    }
+  }
+
+  //
+  // Build Method
+  //
   @override
   Widget build(BuildContext context) {
     debugLog('Building WebView...');

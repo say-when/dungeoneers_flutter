@@ -55,6 +55,7 @@ dependencies:
   webview_flutter_wkwebview: ^3.13.1
   shared_preferences: ^2.3.2
   url_launcher: ^6.3.0
+  in_app_review: ^2.0.9
 
 dev_dependencies:
   flutter_test:
