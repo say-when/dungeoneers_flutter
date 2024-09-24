@@ -29,7 +29,7 @@ void main() async {
     DeviceOrientation.landscapeRight,
     DeviceOrientation.landscapeLeft,
   ]);
-  
+
   await SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.manual,
     overlays: [],
@@ -131,9 +131,9 @@ class _DungeoneersMainState extends State<DungeoneersMain> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
           alignment: Alignment.center,
           color: Colors.black,
           child: const DNGWebView(),

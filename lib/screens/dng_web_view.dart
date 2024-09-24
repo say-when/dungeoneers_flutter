@@ -48,9 +48,11 @@ class _DNGWebViewState extends DNGWebBase
       ..setBackgroundColor(const Color(0xFFFFFFFF));
 
     initPlatformState();
-    Future.delayed(const Duration(seconds: 2), () {
+
+    // Test DebugScreen...
+    /*Future.delayed(const Duration(seconds: 2), () {
       showDebugScreen();
-    });
+    });*/
   }
 
   void _systemSettingsListener() {
@@ -166,8 +168,6 @@ class _DNGWebViewState extends DNGWebBase
             controller: controller,
           );
 
-    return SafeArea(
-      child: webView,
-    );
+    return webView;
   }
 }

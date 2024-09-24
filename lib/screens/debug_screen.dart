@@ -40,8 +40,11 @@ class _DebugScreenState extends State<DebugScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.sizeOf(context);
-    final containerHeight = screenSize.height * 0.4; // 70% of screen height
-    final containerWidth = screenSize.width * 0.6; // 85% of screen width
+    final isTablet = screenSize.shortestSide >= 600;
+    final containerHeight = screenSize.height *
+        (isTablet ? 0.5 : 0.7); // 70% for tablet, 40% for phone
+    final containerWidth =
+        screenSize.width * 0.6; // 85% for tablet, 60% for phone
 
     return Container(
       alignment: Alignment.center,
@@ -64,9 +67,12 @@ class _DebugScreenState extends State<DebugScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.close, color: Colors.black),
-                        onPressed: () => Navigator.of(context).pop(),
+                      Material(
+                        color: Colors.transparent,
+                        child: IconButton(
+                          icon: const Icon(Icons.close, color: Colors.black),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
                       ),
                       const Expanded(
                         child: Center(
@@ -93,7 +99,7 @@ class _DebugScreenState extends State<DebugScreen> {
                         tileColor: Colors.black87,
                         title: Text(
                           Constants.appURLs[index],
-                          style: const TextStyle(fontSize: 20),
+                          style: TextStyle(fontSize: isTablet ? 20 : 16),
                         ),
                         onTap: () => _onSelected(index),
                         selected: index == _selectedIndex,
