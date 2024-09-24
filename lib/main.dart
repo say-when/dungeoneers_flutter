@@ -132,12 +132,11 @@ class _DungeoneersMainState extends State<DungeoneersMain> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          alignment: Alignment.center,
-          color: Colors.black,
-          child: const DNGWebView(),
-        ),
+      backgroundColor: Colors.black,
+      body: Container(
+        alignment: Alignment.center,
+        color: Colors.black,
+        child: const DNGWebView(),
       ),
     ); // This trailing comma makes auto-formatting nicer for build methods.
   }
