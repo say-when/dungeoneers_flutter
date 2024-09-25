@@ -143,11 +143,26 @@ class System {
       var str = "($strMachine; $strVersion)"; //; $os)";
       return str;
     } else if (Platform.isAndroid) {
-      //AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      var device = isTablet ? 'iPad' : 'iPhone'; //androidInfo.device;
-      var sdkInt = "18.0"; //androidInfo.version.sdkInt;
-      var release = "17,1"; // androidInfo.version.release;
-      return '($device$release; $sdkInt)'; // $os)';
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      var model = androidInfo.model;
+      var sdkInt = androidInfo.version.sdkInt;
+      if (model.contains('gphone') ||
+          model.contains('emu64') ||
+          model.contains('SDK') ||
+          model.contains('arm64')) {
+        if (isTablet) {
+          model = 'iPad';
+          sdkInt = 18;
+          return '(iPad14,9; 18.0)';
+        } else {
+          model = 'Pixel 6';
+          sdkInt = 33;
+        }
+      } //isTablet ? 'iPad' : 'iPhone'; //androidInfo.device;
+      //"18.0"; //androidInfo.version.sdkInt;
+      var release = androidInfo.version.release;
+      //"17,1"; // androidInfo.version.release;
+      return '($model,$release; $sdkInt)'; // $os)';
     } else {
       return '(unknown; unknown; $os)';
     }
