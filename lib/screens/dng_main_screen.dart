@@ -6,6 +6,7 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'package:dungeoneers/mixins/javascript_callback_mixin.dart';
@@ -46,17 +47,24 @@ class _DNGMainScreenState extends DNGMainBase
     } else {
       params = const PlatformWebViewControllerCreationParams();
     }
+
     controller = WebViewController.fromPlatformCreationParams(params)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFFFFFFF));
 
+    if (controller.platform is AndroidWebViewController) {
+      AndroidWebViewController.enableDebugging(true);
+      (controller.platform as AndroidWebViewController)
+          .setMediaPlaybackRequiresUserGesture(false);
+    }
+
     initPlatformState();
 
     // Test DebugScreen...
-    Future.delayed(const Duration(seconds: 2), () {
+    /*Future.delayed(const Duration(seconds: 2), () {
       //showDebugScreen();
       showInAppRatingsAlert();
-    });
+    });*/
   }
 
   void _systemSettingsListener() {
@@ -82,10 +90,13 @@ class _DNGMainScreenState extends DNGMainBase
   }
 
   Future<void> initPlatformState() async {
+    //    'Dungeoneers 2.0.0 rv:91 (iPad14,9; 18.0)'; //Network.userAgent;
+    var userAgent = Network.userAgent;
+    log(userAgent);
     try {
       controller
         ..clearCache()
-        ..setUserAgent(Network.userAgent)
+        ..setUserAgent(userAgent)
         ..setNavigationDelegate(
           NavigationDelegate(
             onProgress: (int progress) {

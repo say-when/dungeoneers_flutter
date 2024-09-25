@@ -1,4 +1,6 @@
-import 'dart:io';
+import 'dart:io' show Platform;
+import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -98,9 +100,36 @@ class System {
     }
   }
 
+  static Future<bool> isAndroidTablet() async {
+    final deviceInfoPlugin = DeviceInfoPlugin();
+    var androidInfo = await deviceInfoPlugin.androidInfo;
+
+    // Check if the device has the tablet feature
+    if (androidInfo.systemFeatures.contains('android.hardware.type.tablet')) {
+      return true;
+    }
+
+    // Fallback: Check the screen size
+    final view = ui.PlatformDispatcher.instance.views.first;
+    final size = view.physicalSize / view.devicePixelRatio;
+    final diagonal =
+        math.sqrt(size.width * size.width + size.height * size.height);
+    final isTablet = diagonal > 1100.0; // Adjust the threshold as needed
+
+    return isTablet;
+  }
+
   static Future<String> architecture() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     var os = Platform.operatingSystem;
+    bool isTablet = false;
+
+    if (Platform.isIOS) {
+      var iosInfo = await deviceInfo.iosInfo;
+      isTablet = iosInfo.model.toLowerCase().contains('ipad');
+    } else if (Platform.isAndroid) {
+      isTablet = await System.isAndroidTablet();
+    }
 
     if (Platform.isIOS) {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
@@ -114,11 +143,11 @@ class System {
       var str = "($strMachine; $strVersion)"; //; $os)";
       return str;
     } else if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      var device = androidInfo.device;
-      var sdkInt = androidInfo.version.sdkInt;
-      var release = androidInfo.version.release;
-      return '($device; $release/$sdkInt)'; // $os)';
+      //AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      var device = isTablet ? 'iPad' : 'iPhone'; //androidInfo.device;
+      var sdkInt = "18.0"; //androidInfo.version.sdkInt;
+      var release = "17,1"; // androidInfo.version.release;
+      return '($device$release; $sdkInt)'; // $os)';
     } else {
       return '(unknown; unknown; $os)';
     }

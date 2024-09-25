@@ -1,17 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:in_app_review/in_app_review.dart';
-
 import 'package:dungeoneers/providers/system_settings.dart';
-import 'package:dungeoneers/screens/debug_screen.dart';
 import 'package:dungeoneers/screens/dng_main_screen.dart';
 
 abstract class DNGMainBase extends State<DNGMainScreen> {
-  final InAppReview _inAppReview = InAppReview.instance;
   late WebViewController controller;
   late SystemSettings systemSettings;
 
