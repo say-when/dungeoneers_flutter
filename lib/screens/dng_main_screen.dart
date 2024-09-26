@@ -6,7 +6,6 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'package:dungeoneers/mixins/javascript_callback_mixin.dart';
@@ -52,12 +51,6 @@ class _DNGMainScreenState extends DNGMainBase
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFFFFFFF));
 
-    if (controller.platform is AndroidWebViewController) {
-      AndroidWebViewController.enableDebugging(true);
-      (controller.platform as AndroidWebViewController)
-          .setMediaPlaybackRequiresUserGesture(false);
-    }
-
     initPlatformState();
 
     // Test DebugScreen...
@@ -94,8 +87,10 @@ class _DNGMainScreenState extends DNGMainBase
     var userAgent = Network.userAgent;
     log(userAgent);
     try {
+      await controller.clearLocalStorage();
+      await controller.clearCache();
       controller
-        ..clearCache()
+        ..enableZoom(false)
         ..setUserAgent(userAgent)
         ..setNavigationDelegate(
           NavigationDelegate(
@@ -109,6 +104,8 @@ class _DNGMainScreenState extends DNGMainBase
               //print('onPageFinished!');
               //Network.copySessionCookies();
               //setBackButtonState();
+              controller.runJavaScript(
+                  "document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');");
             },
             onWebResourceError: (WebResourceError error) {},
             onNavigationRequest: (NavigationRequest request) {
@@ -120,8 +117,6 @@ class _DNGMainScreenState extends DNGMainBase
           ),
         );
       //print('++++++DEBUG: Copying session cookie...');
-      await controller.clearLocalStorage();
-      await controller.clearCache();
       //print('++++++DEBUG: WebView is copying session cookies...');
       //await Network.copySessionCookies();
       //print('++++++DEBUG: WebView is done copying session cookies...');
@@ -222,8 +217,8 @@ class _DNGMainScreenState extends DNGMainBase
             ),
           )
         : WebViewWidget(
-            controller: controller,
-          );
+          controller: controller,
+        );
 
     return webView;
   }

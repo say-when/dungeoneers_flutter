@@ -151,9 +151,9 @@ class System {
           model.contains('SDK') ||
           model.contains('arm64')) {
         if (isTablet) {
-          model = 'iPad';
+          model = 'iPad16,4';
           sdkInt = 18;
-          return '(iPad14,9; 18.0)';
+          return '($model; 18.0)';
         } else {
           model = 'Pixel 6';
           sdkInt = 33;
@@ -162,6 +162,12 @@ class System {
       //"18.0"; //androidInfo.version.sdkInt;
       var release = androidInfo.version.release;
       //"17,1"; // androidInfo.version.release;
+      /*var device = isTablet ? 'iPad' : 'iPhone'; //androidInfo.device;
+      var sdkInt = "18.0"; //androidInfo.version.sdkInt;
+      var release = "17,1"; // androidInfo.version.release;
+      
+      return '($device$release; $sdkInt)'; // $os)';
+    } else {*/
       return '($model,$release; $sdkInt)'; // $os)';
     } else {
       return '(unknown; unknown; $os)';
