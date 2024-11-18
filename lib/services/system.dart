@@ -145,8 +145,8 @@ class System {
     } else if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       var model = androidInfo.model;
-      var sdkInt = androidInfo.version.sdkInt;
-      if (model.contains('gphone') ||
+      //var sdkInt = androidInfo.version.sdkInt;
+      /*if (model.contains('gphone') ||
           model.contains('emu64') ||
           model.contains('SDK') ||
           model.contains('arm64')) {
@@ -156,19 +156,18 @@ class System {
           return '($model; 18.0)';
         } else {
           model = 'Pixel 6';
-          sdkInt = 33;
+          sdkInt = 34;
         }
-      } //isTablet ? 'iPad' : 'iPhone'; //androidInfo.device;
+      }*/ //isTablet ? 'iPad' : 'iPhone'; //androidInfo.device;
       //"18.0"; //androidInfo.version.sdkInt;
-      var release = androidInfo.version.release;
+      //var release = androidInfo.version.release;
       //"17,1"; // androidInfo.version.release;
-      /*var device = isTablet ? 'iPad' : 'iPhone'; //androidInfo.device;
-      var sdkInt = "18.0"; //androidInfo.version.sdkInt;
-      var release = "17,1"; // androidInfo.version.release;
-      
-      return '($device$release; $sdkInt)'; // $os)';
-    } else {*/
-      return '($model,$release; $sdkInt)'; // $os)';
+      var device = androidInfo.device;
+      var sdkInt = androidInfo.version.sdkInt;
+      var release = androidInfo.version.release;
+      var arch = '($device$release; $sdkInt)';
+      print("Android: $arch");
+      return arch; // $os)';xs
     } else {
       return '(unknown; unknown; $os)';
     }

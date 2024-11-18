@@ -91,7 +91,7 @@ class _DNGMainScreenState extends DNGMainBase
       await controller.clearCache();
       controller
         ..enableZoom(false)
-        ..setUserAgent(userAgent)
+        //..setUserAgent(userAgent)
         ..setNavigationDelegate(
           NavigationDelegate(
             onProgress: (int progress) {
@@ -104,8 +104,8 @@ class _DNGMainScreenState extends DNGMainBase
               //print('onPageFinished!');
               //Network.copySessionCookies();
               //setBackButtonState();
-              controller.runJavaScript(
-                  "document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');");
+              /*controller.runJavaScript(
+                  "document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');");*/
             },
             onWebResourceError: (WebResourceError error) {},
             onNavigationRequest: (NavigationRequest request) {
@@ -147,7 +147,8 @@ class _DNGMainScreenState extends DNGMainBase
 
   @override
   void loadDungeoneers() {
-    controller.loadRequest(Uri.parse(systemSettings.baseURL()));
+    Uri url = Uri.parse("https://www.dungeoneers.com");
+    controller.loadRequest(url);
   }
 
   @override
@@ -217,8 +218,8 @@ class _DNGMainScreenState extends DNGMainBase
             ),
           )
         : WebViewWidget(
-          controller: controller,
-        );
+            controller: controller,
+          );
 
     return webView;
   }
