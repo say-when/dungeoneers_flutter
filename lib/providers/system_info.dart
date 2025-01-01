@@ -5,6 +5,7 @@ class SystemInfo {
   final String soundsDirectory;
   final String bundleDirectory;
   final String tempDirectory;
+  final bool isTablet;
 
   SystemInfo({
     required this.userAgent,
@@ -13,5 +14,6 @@ class SystemInfo {
     required this.soundsDirectory,
     required this.bundleDirectory,
     required this.tempDirectory,
+    required this.isTablet,
   });
 }

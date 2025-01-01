@@ -10,6 +10,7 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'package:dungeoneers/mixins/javascript_callback_mixin.dart';
 import 'package:dungeoneers/networking/network.dart';
+import 'package:dungeoneers/providers/system_info.dart';
 import 'package:dungeoneers/providers/system_settings.dart';
 import 'package:dungeoneers/screens/debug_screen.dart';
 import 'package:dungeoneers/screens/dng_main_base.dart';
@@ -28,10 +29,13 @@ class _DNGMainScreenState extends DNGMainBase
   final InAppReview _inAppReview = InAppReview.instance;
   Brightness brightness =
       WidgetsBinding.instance.platformDispatcher.platformBrightness;
+  late bool isTablet;
 
   @override
   void initState() {
     super.initState();
+
+    isTablet = Provider.of<SystemInfo>(context, listen: false).isTablet;
     systemSettings = Provider.of<SystemSettings>(context, listen: false);
     WidgetsBinding.instance.addObserver(this);
 
@@ -91,46 +95,19 @@ class _DNGMainScreenState extends DNGMainBase
       await controller.clearCache();
       controller
         ..enableZoom(false)
-        //..setUserAgent(userAgent)
+        ..setUserAgent(userAgent)
         ..setNavigationDelegate(
           NavigationDelegate(
-            onProgress: (int progress) {
-              // Update loading bar.
-            },
-            onPageStarted: (String url) {
-              // Handle page started event.
-            },
-            onPageFinished: (String url) {
-              //print('onPageFinished!');
-              //Network.copySessionCookies();
-              //setBackButtonState();
+            onWebResourceError: (WebResourceError error) {},
+            onPageFinished: (url) {
               /*controller.runJavaScript(
                   "document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');");*/
             },
-            onWebResourceError: (WebResourceError error) {},
             onNavigationRequest: (NavigationRequest request) {
-              /*if (request.url.startsWith('https://www.youtube.com/')) {
-                return NavigationDecision.prevent;
-              }*/
               return NavigationDecision.navigate;
             },
           ),
         );
-      //print('++++++DEBUG: Copying session cookie...');
-      //print('++++++DEBUG: WebView is copying session cookies...');
-      //await Network.copySessionCookies();
-      //print('++++++DEBUG: WebView is done copying session cookies...');
-      /*var cookie = await Network.getSessionCookie();
-      if (cookie != null) {
-        await WebViewCookieManager().setCookie(WebViewCookie(
-            name: cookie.name,
-            value: cookie.value,
-            domain: API.baseURL,
-            path: '/'));
-
-        Map<String, String> header = {
-          'Cookie': '${cookie.name}=${cookie.value}'
-        };*/
       debugLog('Loading URL: ${systemSettings.baseURL()}');
       loadDungeoneers();
     } catch (err) {
@@ -147,8 +124,7 @@ class _DNGMainScreenState extends DNGMainBase
 
   @override
   void loadDungeoneers() {
-    Uri url = Uri.parse("https://www.dungeoneers.com");
-    controller.loadRequest(url);
+    controller.loadRequest(Uri.parse(systemSettings.baseURL()));
   }
 
   @override
@@ -208,13 +184,17 @@ class _DNGMainScreenState extends DNGMainBase
   Widget build(BuildContext context) {
     debugLog('Building WebView...');
     //setLightDarkMode();
-    var isTablet = MediaQuery.sizeOf(context).shortestSide >= 600;
 
     Widget webView = isTablet
         ? AspectRatio(
             aspectRatio: 4 / 3,
-            child: WebViewWidget(
-              controller: controller,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.red, width: 2),
+              ),
+              child: WebViewWidget(
+                controller: controller,
+              ),
             ),
           )
         : WebViewWidget(

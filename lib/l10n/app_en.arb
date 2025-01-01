@@ -1,9 +1,31 @@
 {
+  "@@locale": "en",
   "appTitle": "Dungeoneers",
+  "@appTitle": {
+    "description": "The title of the app"
+  },
   "systemErrorTitle": "Dungeoneers Error",
+  "@systemErrorTitle": {
+    "description": "The title of the system error dialog"
+  },
   "systemErrorText": "Something went wrong trying to contact the server.",
+  "@systemErrorText": {
+    "description": "The text of the system error dialog"
+  },
   "invalidResult": "Invalid result.",
+  "@invalidResult": {
+    "description": "The text of the invalid result dialog"
+  },
   "invalidResultData": "Invalid result data.",
+  "@invalidResultData": {
+    "description": "The text of the invalid result data dialog"
+  },
   "ok": "OK",
-  "cancel": "Cancel"
+  "@ok": {
+    "description": "The text of the OK button"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "The text of the Cancel button"
+  }
 }

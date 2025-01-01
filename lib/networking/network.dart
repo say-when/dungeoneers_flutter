@@ -304,26 +304,30 @@ class Network {
         }
         // Handle error
         if (isMounted != null && !isMounted()) return null;
-        showDialog(
-          context: context!,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(title!),
-              content: Text(msg!),
-              actions: [
-                TextButton(
-                  child: Text(tr.ok),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    if (callback != null) {
-                      callback();
-                    }
-                  },
-                ),
-              ],
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (isMounted != null && isMounted()) {
+            showDialog(
+              context: context!,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(title!),
+                  content: Text(msg!),
+                  actions: [
+                    TextButton(
+                      child: Text(tr.ok),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        if (callback != null) {
+                          callback();
+                        }
+                      },
+                    ),
+                  ],
+                );
+              },
             );
-          },
-        );
+          }
+        });
         return null;
       } else {
         return e;

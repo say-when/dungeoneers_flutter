@@ -121,15 +121,6 @@ class System {
 
   static Future<String> architecture() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    var os = Platform.operatingSystem;
-    bool isTablet = false;
-
-    if (Platform.isIOS) {
-      var iosInfo = await deviceInfo.iosInfo;
-      isTablet = iosInfo.model.toLowerCase().contains('ipad');
-    } else if (Platform.isAndroid) {
-      isTablet = await System.isAndroidTablet();
-    }
 
     if (Platform.isIOS) {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
@@ -137,39 +128,21 @@ class System {
       var strVersion = 'unknown';
       var machine = iosInfo.utsname.machine;
       strMachine = machine;
-      var version = iosInfo.systemVersion;
-      strVersion = version;
+      strVersion = iosInfo.systemVersion.replaceAll('.', '_');
 
-      var str = "($strMachine; $strVersion)"; //; $os)";
+      var str = "($strMachine; OS $strVersion; iOS)";
       return str;
     } else if (Platform.isAndroid) {
+      bool isTablet = await System.isAndroidTablet();
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      var model = androidInfo.model;
-      //var sdkInt = androidInfo.version.sdkInt;
-      /*if (model.contains('gphone') ||
-          model.contains('emu64') ||
-          model.contains('SDK') ||
-          model.contains('arm64')) {
-        if (isTablet) {
-          model = 'iPad16,4';
-          sdkInt = 18;
-          return '($model; 18.0)';
-        } else {
-          model = 'Pixel 6';
-          sdkInt = 34;
-        }
-      }*/ //isTablet ? 'iPad' : 'iPhone'; //androidInfo.device;
-      //"18.0"; //androidInfo.version.sdkInt;
-      //var release = androidInfo.version.release;
-      //"17,1"; // androidInfo.version.release;
       var device = androidInfo.device;
+      var model = androidInfo.model;
       var sdkInt = androidInfo.version.sdkInt;
       var release = androidInfo.version.release;
-      var arch = '($device$release; $sdkInt)';
-      print("Android: $arch");
-      return arch; // $os)';xs
+
+      return '(${device.contains('emulator') ? device : model}; Android ${isTablet ? 'Tablet' : 'Phone'} $release.$sdkInt)';
     } else {
-      return '(unknown; unknown; $os)';
+      return '(unknown; unknown; unknown)';
     }
   }
 

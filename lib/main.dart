@@ -24,6 +24,7 @@ void main() async {
   String soundsDirectory = await System.soundsDirectory;
   String bundleDirectory = await System.bundleDirectory;
   String tempDirectory = await System.tempDirectory;
+  bool isTablet = await System.isAndroidTablet();
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeRight,
@@ -44,6 +45,7 @@ void main() async {
         soundsDirectory: soundsDirectory,
         bundleDirectory: bundleDirectory,
         tempDirectory: tempDirectory,
+        isTablet: isTablet,
       ),
       child: const DungeoneersApp(),
     ),
